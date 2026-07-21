@@ -1,20 +1,17 @@
-function CustomButton({ text, onClick, bgColor }) {
+function CustomButton({ text, onClick }) {
   return (
     <button 
-      onClick={onClick}
-      style={{ 
-        padding: '12px 24px', 
-        fontSize: '16px', 
-        cursor: 'pointer', 
-        borderRadius: '8px', 
-        backgroundColor: bgColor, // لون الخلفية هنا بقى ديناميكي متغير!
-        color: 'white', 
-        border: 'none', 
-        fontWeight: 'bold',
-        transition: 'transform 0.1s ease',
+      onClick={onClick} 
+      style={{
+        padding: '10px 20px',
+        fontSize: '18px',
+        margin: '5px',
+        backgroundColor: '#007bff',
+        color: '#ffffff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer'
       }}
-      onMouseDown={(e) => e.target.style.transform = 'scale(0.95)'}
-      onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
     >
       {text}
     </button>

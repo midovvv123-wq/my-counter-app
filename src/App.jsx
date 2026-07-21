@@ -1,39 +1,64 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import CounterDisplay from './components/CounterDisplay';
-import CustomButton from './components/CustomButton'; // استدعاء الزرار الذكي الجديد
+import CustomButton from './components/CustomButton';
 
 function App() {
-  const [score, setScore] = useState(0);
+  const [count, setCount] = useState(() => {
+    const savedCount = localStorage.getItem('count');
+    return savedCount !== null ? Number(savedCount) : 0;
+  });
+  
+  const [step, setStep] = useState(1);
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    localStorage.setItem('count', count);
+  }, [count]);
+
+  const handleIncrement = () => {
+    const newCount = count + step;
+    setCount(newCount);
+    setHistory(prev => [newCount, ...prev.slice(0, 4)]); // الاحتفاظ بآخر 5 عمليات
+  };
+
+  const handleDecrement = () => {
+    const newCount = count - step;
+    setCount(newCount);
+    setHistory(prev => [newCount, ...prev.slice(0, 4)]);
+  };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '70px', fontFamily: 'Arial, sans-serif' }}>
-      
+    <div style={{ textAlign: 'center', marginTop: '30px' }}>
       <Header />
+      <CounterDisplay value={count} />
 
-      <CounterDisplay value={score} />
+      <div style={{ margin: '20px' }}>
+        <CustomButton text={`-${step}`} onClick={handleDecrement} />
+        <CustomButton text={`+${step}`} onClick={handleIncrement} />
+      </div>
 
-      {/* هنا بنستدعي نفس المكون 3 مرات بشكل نظيف جداً وبألوان ووظائف مختلفة */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
-        
-        <CustomButton 
-          text="زيادة (+)" 
-          onClick={() => setScore(score + 1)} 
-          bgColor="#3498db" 
-        />
+      <div style={{ marginTop: '20px' }}>
+        <p style={{ color: '#555' }}>اختر مقدار التغيير:</p>
+        <button onClick={() => setStep(1)} style={{ margin: '5px', padding: '8px 15px', cursor: 'pointer' }}>1</button>
+        <button onClick={() => setStep(5)} style={{ margin: '5px', padding: '8px 15px', cursor: 'pointer' }}>5</button>
+        <button onClick={() => setStep(10)} style={{ margin: '5px', padding: '8px 15px', cursor: 'pointer' }}>10</button>
+      </div>
 
-        <CustomButton 
-          text="تصفير (Reset)" 
-          onClick={() => setScore(0)} 
-          bgColor="#95a5a6" 
-        />
-
-        <CustomButton 
-          text="نقصان (-)" 
-          onClick={() => setScore(score - 1)} 
-          bgColor="#e74c3c" 
-        />
-
+      {/* سجل العمليات الاحترافي */}
+      <div style={{ marginTop: '30px' }}>
+        <h4 style={{ color: '#333' }}>سجل العمليات الأخيرة:</h4>
+        <div style={{ display: 'inline-block', background: '#f8f9fa', padding: '10px 20px', borderRadius: '8px', border: '1px solid #ddd' }}>
+          {history.length === 0 ? (
+            <p style={{ color: '#888', margin: 0 }}>لا توجد عمليات سجّلت بعد</p>
+          ) : (
+            history.map((item, index) => (
+              <span key={index} style={{ margin: '0 10px', fontWeight: 'bold', color: '#007bff' }}>
+                [{item}]
+              </span>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
